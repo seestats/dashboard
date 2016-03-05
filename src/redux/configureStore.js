@@ -17,14 +17,6 @@ export default function configureStore (initialState = {}, history) {
   // Create final store and subscribe router in debug env ie. for devtools
   const store = middleware(createStore)(rootReducer, initialState)
 
-  // Random data generation for charts
-  // setInterval(() => {
-  //   store.dispatch({
-  //     type: 'RANDOM_ALL_DATA',
-  //   })
-  // }, 5000);
-  store.dispatch(loadDashboardData())
-
   if (module.hot) {
     module.hot.accept('./rootReducer', () => {
       const nextRootReducer = require('./rootReducer').default
