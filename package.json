@@ -57,15 +57,13 @@
       }
     }
   },
-  "author": "Arnoldas Sidlausaks",
-  "license": "MIT",
+  "author": "seeStats",
   "dependencies": {
     "axios": "^0.9.1",
     "chart.js": "^1.0.2",
     "debug": "^2.2.0",
     "express": "^4.13.4",
     "express-static": "^1.0.3",
-    "fixed-data-table": "^0.6.0",
     "history": "^2.0.0",
     "koa": "^2.0.0-alpha.3",
     "koa-connect-history-api-fallback": "^0.3.0",

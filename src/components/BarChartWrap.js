@@ -8,6 +8,8 @@ import parseApiData from 'utils/parseApiData'
 
 import chartjs from 'react-chartjs'
 const { Line, Bar, Radar, Pie } = chartjs
+import SizePicker from './SizePicker'
+import getDomain from 'utils/getDomain'
 
 export class BarChartWrap extends React.Component {
 
@@ -16,11 +18,12 @@ export class BarChartWrap extends React.Component {
 
     this.state = {
       loaded: false,
+      size: this.props.size
     }
   }
 
   _requestData() {
-    getDataFromApi(this.props.apiType, 'top', this.props.size, this.props.dateFrom, this.props.dateTo).then((resp) => {
+    getDataFromApi(this.props.apiType, this.props.ordering, this.state.size, this.props.dateFrom, this.props.dateTo).then((resp) => {
       if (resp.data.success) {
         const { xs, ys } = parseApiData(resp.data)
         this.setState({
@@ -41,7 +44,7 @@ export class BarChartWrap extends React.Component {
       this._requestData()
       const repeatInterval = setInterval(() => {
         this._requestData()
-      }, 500)
+      }, 1000)
       this.setState({
         repeatInterval,
       })
@@ -57,21 +60,16 @@ export class BarChartWrap extends React.Component {
   }
 
   _prepareDataForChart(xs, ys) {
-    const domains = xs.map((x) => {
-      return x.replace('http://', '')
-              .replace('https://', '')
-              .split(':')[0]
-              .replace('?', '')
-    })
+    const domains = xs.map(getDomain)
     return {
         labels: domains,
         datasets: [
             {
                 label: "My First dataset",
-                fillColor: "rgba(220,220,220,0.5)",
-                strokeColor: "rgba(220,220,220,0.8)",
-                highlightFill: "rgba(220,220,220,0.75)",
-                highlightStroke: "rgba(220,220,220,1)",
+                fillColor: "rgba(100,255,218,0.45)",
+                strokeColor: "rgba(100,255,218,0.8)",
+                highlightFill: "rgba(100,255,218,0.7)",
+                highlightStroke: "rgba(100,255,218,1)",
                 data: ys,
             }
         ]
@@ -86,19 +84,34 @@ export class BarChartWrap extends React.Component {
         </div>
       )
     }
-    const padding = 10
-    const graphWidth = this.props.width - padding * 2
-    const graphHeight = this.props.height ? this.props.height - padding * 2 : graphWidth / 2
+    const margin = 10
+    const padding = 25
+
+    const containerWidth = this.props.width - 2 * margin
+
+    const graphWidth = containerWidth - 2 * padding
+    const graphHeight = this.props.height ? this.props.height : graphWidth
+
     return (
-      <div style={{ width: graphWidth, padding: padding, display: 'flex', flexFlow: 'column', border: '1px solid black', boxSizing: 'border-box' }}>
+      <div className="chart-wrap"
+        style={{ width: containerWidth, padding: padding, margin: margin, display: 'flex', flexFlow: 'column' }}>
         {this.props.title ? (
-          <h3>{this.props.title}</h3>
+          <h3 className="chart-title">{this.props.title}</h3>
         ) : null}
-        <Bar data={this._prepareDataForChart(this.state.xs, this.state.ys)}
+        {this.props.allowChangeSize
+          ? <SizePicker value={this.state.size} onChange={(selectedSize) => {this.setState({size: selectedSize})}} />
+          : null
+        }
+        <Bar className="chart" data={this._prepareDataForChart(this.state.xs, this.state.ys)}
           style={{
-            width: graphWidth - 2 * padding,
-            height: graphHeight - 2 * padding,
-            padding: padding,
+            width: graphWidth,
+            height: graphHeight,
+          }}
+          options={{
+            scaleFontColor: '#BDBDBD',
+            scaleShowGridLines : true,
+            scaleGridLineColor : "rgba(255,255,255,.14)",
+            scaleGridLineWidth : 1,
           }}
         />
       </div>

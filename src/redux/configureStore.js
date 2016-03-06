@@ -2,7 +2,6 @@ import { applyMiddleware, compose, createStore } from 'redux'
 import thunk from 'redux-thunk'
 import rootReducer from './rootReducer'
 import { routerMiddleware } from 'react-router-redux'
-import { loadDashboardData } from './modules/dashboardData'
 
 export default function configureStore (initialState = {}, history) {
   // Compose final middleware and use devtools in debug environment

@@ -8,6 +8,8 @@ const { Line, Bar, Radar, Pie } = chartjs
 
 import getDataFromApi from 'utils/getDataFromApi'
 import parseApiData from 'utils/parseApiData'
+import getDomain from 'utils/getDomain'
+import SizePicker from './SizePicker'
 
 export class BarChartWrap extends React.Component {
 
@@ -18,16 +20,17 @@ export class BarChartWrap extends React.Component {
       loaded: false,
       xs: [],
       ys: [],
+      size: this.props.size
     }
   }
 
   _requestData() {
-    getDataFromApi(this.props.apiType, 'top', this.props.size, this.props.dateFrom, this.props.dateTo).then((resp) => {
+    getDataFromApi(this.props.apiType, this.props.ordering, this.state.size, this.props.dateFrom, this.props.dateTo).then((resp) => {
       if (resp.data.success) {
         const { xs, ys } = parseApiData(resp.data)
         this.setState({
-          xs,
-          ys,
+          xs: xs,
+          ys: ys,
           loaded: true,
         })
       } else {
@@ -60,22 +63,17 @@ export class BarChartWrap extends React.Component {
 
   _prepareDataForChart(xs, ys) {
 
-    const colors = ['#fd8a78', '#5d1dc0', '#5d1dc0', '#bba586', '#bba586', '#2ba41b', '#8f8f57',
-                    '#f09022', '#61ad1f', '#49c8ba', '#083792']
+    const colors = ['#651FFF', '#FF1744', '#D500F9', '#1DE9B6', '#2979FF',
+                    '#FF9100', '#FFEA00', '#00E676', '#76FF03', '#00E5FF']
 
-    const domains = xs.map((x) => {
-      return x.replace('http://', '')
-              .replace('https://', '')
-              .split(':')[0]
-              .replace('?', '')
-    })
+    const domains = xs.map(getDomain)
 
     let pieData = []
     for (let i = 0; i < xs.length; i++) {
       pieData.push({
         label: domains[i],
         value: ys[i],
-        color: colors[i],
+        color: colors[i % colors.length],
       })
     }
     return pieData
@@ -89,19 +87,27 @@ export class BarChartWrap extends React.Component {
         </div>
       )
     }
-    const padding = 10
-    const graphWidth = this.props.width - padding * 2
-    const graphHeight = this.props.height ? this.props.height - padding * 2 : graphWidth - padding * 2
+    const margin = 10
+    const padding = 25
+
+    const containerWidth = this.props.width - 2 * margin
+
+    const graphWidth = containerWidth - 2 * padding
+    const graphHeight = this.props.height ? this.props.height : graphWidth
     return (
-      <div style={{ width: graphWidth, padding: padding, display: 'flex', flexFlow: 'column', border: '1px solid black', boxSizing: 'border-box' }}>
+      <div className="chart-wrap"
+        style={{ width: containerWidth, padding: padding, margin: margin, display: 'flex', flexFlow: 'column' }}>
         {this.props.title ? (
-          <h3>{this.props.title}</h3>
+          <h3 className="chart-title">{this.props.title}</h3>
         ) : null}
-        <Pie data={this._prepareDataForChart(this.state.xs, this.state.ys)}
+        {this.props.allowChangeSize
+          ? <SizePicker value={this.state.size} onChange={(selectedSize) => {this.setState({size: selectedSize})}} />
+          : null
+        }
+        <Pie className="chart" data={this._prepareDataForChart(this.state.xs, this.state.ys)}
           style={{
-            width: graphWidth - 2 * padding,
-            height: graphHeight - 2 * padding,
-            padding: padding,
+            width: graphWidth,
+            height: graphHeight,
           }}
           options={{
             animationSteps: 10,

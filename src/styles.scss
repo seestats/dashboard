@@ -1,0 +1,43 @@
+* {
+  box-sizing: border-box;
+}
+
+.page-container {
+  background-color: #424242;
+  min-height: 100%;
+}
+
+.chart-wrap {
+  background-color: #212121;
+}
+
+.charts-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.chart-title {
+  color: #EEEEEE;
+  margin: 0px auto;
+  margin-top: -7px;
+}
+
+.sp-btn.btn-default, .sp-btn.btn-default.focus, .sp-btn.btn-default:focus, .sp-btn.btn-default.hover, .sp-btn.btn-default:hover {
+  background-color: #FAFAFA;
+  border-color: #FAFAFA;
+  outline-width: 0px;
+}
+
+.sp-btn.btn-primary, .sp-btn.btn-primary.focus, .sp-btn.btn-primary:focus, .sp-btn.btn-primary.hover, .sp-btn.btn-primary:hover {
+  background-color: #00BFA5;
+  border-color: #FAFAFA;
+  outline-width: 0px;
+}
+
+.chart {
+  margin-top: auto;
+  margin-bottom: auto;
+}
